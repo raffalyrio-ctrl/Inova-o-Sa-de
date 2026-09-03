@@ -1,0 +1,46 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Buscar profissionais{% endblock %}
+
+{% block conteudo %}
+<div class="page">
+  <div style="text-align:center;">
+    <h1 class="page-title display">Encontre o profissional certo para você</h1>
+    <p class="page-sub" style="margin-left:auto; margin-right:auto;">
+      Filtre por especialidade e veja quem está disponível para atender.
+    </p>
+  </div>
+
+  <form method="get" class="filter-bar">
+    <select name="especialidade" onchange="this.form.submit()">
+      <option value="">Todas as especialidades</option>
+      {% for esp in especialidades %}
+        <option value="{{ esp.id }}" {% if request.GET.especialidade == esp.id|stringformat:"s" %}selected{% endif %}>
+          {{ esp.nome }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if profissionais %}
+    <div class="grid-cards">
+      {% for prof in profissionais %}
+        <a href="{% url 'perfil_profissional' prof.id %}" class="prof-card" style="text-decoration:none; color:inherit; display:block;">
+          <div class="prof-avatar">{{ prof.usuario.username|slice:":1"|upper }}</div>
+          {% if prof.especialidade %}
+            <span class="prof-tag">{{ prof.especialidade.nome }}</span>
+          {% endif %}
+          <h3>{{ prof.usuario.get_full_name|default:prof.usuario.username }}</h3>
+          <p>{{ prof.bio|truncatewords:18|default:"Profissional cadastrado na plataforma." }}</p>
+          <div class="prof-price">R$ {{ prof.valor_consulta }} / consulta</div>
+          <span class="btn-outline" style="pointer-events:none;">Ver perfil</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      Nenhum profissional encontrado{% if request.GET.especialidade %} para essa especialidade{% endif %}.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

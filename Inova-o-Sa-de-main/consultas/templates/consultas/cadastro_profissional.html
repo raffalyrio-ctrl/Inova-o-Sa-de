@@ -1,0 +1,71 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Cadastro de Profissional{% endblock %}
+{% block body_class %}mode-profissional{% endblock %}
+
+{% block conteudo %}
+<div class="page page-narrow">
+  <h1 class="page-title display">Crie seu perfil profissional</h1>
+  <p class="page-sub">Cadastro gratuito. Mostre sua especialidade e comece a receber pacientes.</p>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Nome de usuário</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="field-help">{{ form.username.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.email.id_for_label }}">E-mail</label>
+        {{ form.email }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.especialidade.id_for_label }}">Especialidade</label>
+        {{ form.especialidade }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.registro_profissional.id_for_label }}">Registro profissional (CRM, CRP, CREFITO...)</label>
+        {{ form.registro_profissional }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.valor_consulta.id_for_label }}">Valor da consulta (R$)</label>
+        {{ form.valor_consulta }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.bio.id_for_label }}">Sobre você</label>
+        {{ form.bio }}
+        <div class="field-help">Conte um pouco da sua experiência — isso aparece no seu perfil público.</div>
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password1.id_for_label }}">Senha</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="field-help">{{ form.password1.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password2.id_for_label }}">Confirme a senha</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="field-help">{{ form.password2.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <button type="submit" class="btn-solid btn-block">Criar perfil profissional</button>
+    </form>
+  </div>
+
+  <p class="page-sub" style="margin-top:20px; text-align:center;">
+    É paciente? <a href="{% url 'cadastro_paciente' %}" style="color:var(--accent-dark); font-weight:600;">Cadastre-se aqui</a>
+  </p>
+</div>
+{% endblock %}

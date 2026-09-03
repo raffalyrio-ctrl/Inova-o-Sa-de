@@ -1,0 +1,90 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Início{% endblock %}
+{% block body_class %}mode-cliente{% endblock %}
+
+{% block header_guest_actions %}{% endblock %}
+
+{% block conteudo %}
+<div class="mode-shell">
+  <div class="mode-switch" id="mode-switch">
+    <div class="mode-highlight" id="mode-highlight"></div>
+    <button type="button" class="mode-btn" data-mode="cliente"><span class="dot"></span>Paciente</button>
+    <button type="button" class="mode-btn" data-mode="profissional"><span class="dot"></span>Profissional</button>
+  </div>
+</div>
+
+<section class="hero">
+  <svg class="pulse" viewBox="0 0 220 46" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 23H55L67 6L84 40L96 23H130L140 12L150 34L160 23H220"/>
+  </svg>
+  <h1 class="headline display" id="hero-title">Encontre o seu profissional de saúde ideal</h1>
+  <div class="hero-actions">
+    {% if user.is_authenticated and not user.perfilprofissional %}
+      <a href="{% url 'buscar_profissionais' %}" class="btn-solid">Buscar profissionais</a>
+    {% elif user.is_authenticated %}
+      <a href="{% url 'minhas_consultas' %}" class="btn-solid">Minhas consultas</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn-solid">Entrar</a>
+      <span class="hero-or">ou</span>
+      <a href="{% url 'cadastro_paciente' %}" class="btn-solid" id="btn-cadastro">Cadastre-se</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function(){
+  const CONTENT = {
+    cliente: {
+      title: 'Encontre o seu profissional de saúde ideal',
+      cadastroUrl: "{% url 'cadastro_paciente' %}"
+    },
+    profissional: {
+      title: 'Seu próximo cliente está a um clique de distância.',
+      cadastroUrl: "{% url 'cadastro_profissional' %}"
+    }
+  };
+
+  let mode = 'cliente';
+
+  function positionHighlight(btn){
+    const switchEl = document.getElementById('mode-switch');
+    const highlight = document.getElementById('mode-highlight');
+    const sRect = switchEl.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    highlight.style.left = (bRect.left - sRect.left) + 'px';
+    highlight.style.width = bRect.width + 'px';
+  }
+
+  function applyMode(next, btn){
+    mode = next;
+    const c = CONTENT[mode];
+    document.body.className = 'mode-' + mode;
+    document.getElementById('hero-title').textContent = c.title;
+
+    const btnCadastro = document.getElementById('btn-cadastro');
+    if (btnCadastro) btnCadastro.href = c.cadastroUrl;
+
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.classList.toggle('on', b.dataset.mode === mode);
+    });
+    if(btn) positionHighlight(btn);
+  }
+
+  document.querySelectorAll('.mode-btn').forEach(b=>{
+    b.addEventListener('click', ()=> applyMode(b.dataset.mode, b));
+  });
+
+  window.addEventListener('resize', ()=>{
+    const activeBtn = document.querySelector('.mode-btn.on');
+    if(activeBtn) positionHighlight(activeBtn);
+  });
+
+  const firstBtn = document.querySelector('.mode-btn[data-mode="cliente"]');
+  firstBtn.classList.add('on');
+  applyMode('cliente', firstBtn);
+})();
+</script>
+{% endblock %}

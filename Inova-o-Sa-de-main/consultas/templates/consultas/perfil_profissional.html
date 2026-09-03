@@ -1,0 +1,41 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}{{ profissional.usuario.get_full_name|default:profissional.usuario.username }}{% endblock %}
+
+{% block conteudo %}
+<div class="page page-narrow">
+  <div class="card">
+    <div class="prof-avatar" style="width:64px; height:64px; font-size:22px;">
+      {{ profissional.usuario.username|slice:":1"|upper }}
+    </div>
+
+    {% if profissional.especialidade %}
+      <span class="prof-tag">{{ profissional.especialidade.nome }}</span>
+    {% endif %}
+
+    <h1 class="page-title display" style="margin-top:8px;">
+      {{ profissional.usuario.get_full_name|default:profissional.usuario.username }}
+    </h1>
+
+    {% if profissional.registro_profissional %}
+      <p class="field-help" style="margin-bottom:16px;">Registro: {{ profissional.registro_profissional }}</p>
+    {% endif %}
+
+    <p style="font-size:14.5px; color:var(--ink-soft); line-height:1.6;">
+      {{ profissional.bio|default:"Este profissional ainda não adicionou uma descrição." }}
+    </p>
+
+    <div class="prof-price" style="font-size:18px; margin:20px 0;">
+      R$ {{ profissional.valor_consulta }} <span style="font-size:13px; font-weight:400; color:var(--ink-faint);">por consulta</span>
+    </div>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'agendar_consulta' profissional.id %}" class="btn-solid btn-block">Agendar consulta</a>
+    {% else %}
+      <a href="{% url 'login' %}?next={% url 'agendar_consulta' profissional.id %}" class="btn-solid btn-block">
+        Entrar para agendar
+      </a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

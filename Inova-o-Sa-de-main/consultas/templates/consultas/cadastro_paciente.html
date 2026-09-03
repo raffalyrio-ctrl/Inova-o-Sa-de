@@ -1,0 +1,54 @@
+{% extends "consultas/base.html" %}
+{% block titulo %}Cadastro de Paciente{% endblock %}
+{% block body_class %}mode-paciente{% endblock %}
+
+{% block conteudo %}
+<div class="page page-narrow">
+  <h1 class="page-title display">Crie sua conta de paciente</h1>
+  <p class="page-sub">Leva menos de 3 minutos. Depois é só buscar o profissional certo e agendar sua consulta.</p>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Nome de usuário</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="field-help">{{ form.username.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.email.id_for_label }}">E-mail</label>
+        {{ form.email }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+        {{ form.telefone }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password1.id_for_label }}">Senha</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}<div class="field-help">{{ form.password1.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password2.id_for_label }}">Confirme a senha</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}<div class="field-help">{{ form.password2.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <button type="submit" class="btn-solid btn-block">Criar conta</button>
+    </form>
+  </div>
+
+  <p class="page-sub" style="margin-top:20px; text-align:center;">
+    É profissional de saúde? <a href="{% url 'cadastro_profissional' %}" style="color:var(--brand); font-weight:600;">Cadastre-se aqui</a>
+  </p>
+</div>
+{% endblock %}

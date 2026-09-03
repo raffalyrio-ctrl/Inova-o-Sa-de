@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block titulo %}Inovação Saúde{% endblock %} — encontre o profissional certo para você</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,680&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F7F2;
+    --bg-soft:#EFF3EC;
+    --surface:#FFFFFF;
+    --ink:#16302B;
+    --ink-soft:#54695F;
+    --ink-faint:#8DA096;
+    --border:#DEE6DC;
+
+    --brand:#1F6F63;
+    --brand-tint:#DCEEEA;
+
+    /* mode = cliente (paciente) */
+    --accent:#D96C4D;
+    --accent-dark:#B4573D;
+    --accent-tint:#F7E2D8;
+
+    --radius:18px;
+    --shadow:0 1px 2px rgba(22,48,43,0.05), 0 16px 36px -18px rgba(22,48,43,0.22);
+  }
+  body.mode-profissional{
+    --accent:#1F6F63;
+    --accent-dark:#154F46;
+    --accent-tint:#DCEEEA;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
+    position:relative; overflow-x:hidden;
+  }
+  .display{font-family:'Fraunces',serif; font-optical-sizing:auto;}
+  a{color:inherit;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+  button{font:inherit;}
+
+  body::before, body::after{
+    content:''; position:fixed; z-index:0; border-radius:50%; filter:blur(60px); pointer-events:none;
+  }
+  body::before{
+    width:560px; height:560px; top:-220px; right:-160px;
+    background:radial-gradient(circle, var(--accent-tint) 0%, transparent 72%);
+    transition:background .35s ease;
+  }
+  body::after{
+    width:460px; height:460px; bottom:-200px; left:-140px;
+    background:radial-gradient(circle, var(--brand-tint) 0%, transparent 72%);
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:30;
+    background:rgba(245,247,242,0.86); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{display:flex; align-items:center; justify-content:space-between; height:76px;}
+  .logo{display:flex; align-items:center; gap:11px; text-decoration:none;}
+  .logo-mark{
+    width:34px; height:34px; border-radius:10px; background:var(--brand);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .logo-mark svg{width:16px; height:16px;}
+  .logo-text{display:flex; flex-direction:column; line-height:1.15;}
+  .logo-text .mark{font-size:19px; font-weight:600; letter-spacing:0.005em; color:var(--ink);}
+  .logo-text .tag{font-size:11.5px; color:var(--ink-faint);}
+  nav.main-nav{display:flex; gap:6px;}
+  nav.main-nav a{
+    font-size:14px; font-weight:500; color:var(--ink-soft); text-decoration:none;
+    padding:9px 14px; border-radius:8px;
+  }
+  nav.main-nav a:hover{color:var(--ink); background:var(--bg-soft);}
+  .header-actions{display:flex; align-items:center; gap:10px;}
+
+  .btn-ghost{
+    border:1px solid transparent; background:none; color:var(--ink-soft); font-weight:500; font-size:14px;
+    padding:10px 14px; cursor:pointer; border-radius:9px; transition:border-color .2s, color .2s;
+    text-decoration:none; display:inline-block;
+  }
+  .btn-ghost:hover{color:var(--ink); border-color:var(--border);}
+  .btn-solid{
+    border:none; background:var(--accent); color:#fff; font-weight:600; font-size:15px;
+    padding:13px 26px; border-radius:11px; cursor:pointer; transition:background .2s, transform .15s;
+    text-decoration:none; display:inline-block; text-align:center;
+  }
+  .btn-solid:hover{background:var(--accent-dark);}
+  .btn-solid:active{transform:translateY(1px);}
+  .btn-outline{
+    border:1px solid var(--border); background:var(--surface); color:var(--ink); font-weight:600; font-size:14px;
+    padding:11px 20px; border-radius:11px; cursor:pointer; text-decoration:none; display:inline-block;
+  }
+  .btn-outline:hover{border-color:var(--accent);}
+
+  /* ---------- mode switch ---------- */
+  .mode-shell{display:flex; justify-content:center; padding:40px 0 4px; position:relative; z-index:1;}
+  .mode-switch{
+    position:relative; display:inline-flex; background:var(--surface);
+    border-radius:999px; padding:5px; gap:2px; border:1px solid var(--border); box-shadow:var(--shadow);
+  }
+  .mode-highlight{
+    position:absolute; top:5px; bottom:5px; left:5px;
+    background:var(--accent-tint); border-radius:999px;
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1), background .25s;
+  }
+  .mode-btn{
+    position:relative; z-index:1; border:none; background:none; cursor:pointer;
+    padding:11px 24px; font-size:14.5px; font-weight:600; color:var(--ink-soft);
+    border-radius:999px; transition:color .2s;
+    display:flex; align-items:center; gap:8px; text-decoration:none;
+  }
+  .mode-btn.on{color:var(--ink);}
+  .mode-btn .dot{width:7px; height:7px; border-radius:50%; background:var(--accent); transition:background .25s;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:52px 0 90px; text-align:center; position:relative; z-index:1;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .pulse{
+    width:220px; height:46px; margin-bottom:26px; color:var(--accent); transition:color .25s;
+  }
+  .pulse path{
+    fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:340; stroke-dashoffset:340;
+    animation:draw-pulse 1.4s .2s cubic-bezier(.3,.1,.2,1) forwards;
+  }
+  @keyframes draw-pulse{ to{ stroke-dashoffset:0; } }
+
+  h1.headline{
+    font-size:clamp(32px, 4.6vw, 50px); line-height:1.1; font-weight:600; margin:0 auto 40px;
+    max-width:640px; letter-spacing:-0.01em; transition:opacity .2s ease;
+  }
+  h1.page-title{
+    font-size:clamp(28px, 3.6vw, 40px); line-height:1.15; font-weight:600; margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .page-sub{font-size:15.5px; color:var(--ink-soft); margin:0 0 36px; max-width:560px;}
+
+  .hero-actions{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .hero-or{font-size:13.5px; color:var(--ink-faint); font-weight:500;}
+  .hero-actions .btn-solid{min-width:230px;}
+
+  /* ---------- page shell (for internal pages) ---------- */
+  .page{padding:56px 0 90px; position:relative; z-index:1;}
+  .page-narrow{max-width:520px; margin:0 auto;}
+
+  /* ---------- card / surface ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:32px;
+  }
+
+  /* ---------- forms ---------- */
+  .field{margin-bottom:18px; text-align:left;}
+  .field label{
+    display:block; font-size:13px; font-weight:600; color:var(--ink-soft);
+    margin-bottom:7px; letter-spacing:0.01em;
+  }
+  .field input, .field select, .field textarea{
+    width:100%; border:1px solid var(--border); border-radius:11px; padding:12px 14px;
+    font-size:14.5px; font-family:'Inter',sans-serif; color:var(--ink); background:var(--surface);
+    transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:var(--accent);
+  }
+  .field textarea{resize:vertical; min-height:90px;}
+  .field-help{font-size:12px; color:var(--ink-faint); margin-top:5px;}
+  .form-errors{
+    background:var(--accent-tint); border:1px solid var(--accent); border-radius:11px;
+    padding:12px 16px; margin-bottom:18px; font-size:13.5px; color:var(--accent-dark);
+  }
+  .btn-block{width:100%; text-align:center;}
+
+  /* ---------- messages ---------- */
+  .messages{list-style:none; padding:0; margin:0 0 24px;}
+  .messages li{
+    padding:13px 18px; border-radius:11px; margin-bottom:10px; font-size:14px; font-weight:500;
+  }
+  .messages .success{background:var(--brand-tint); color:var(--brand);}
+  .messages .error{background:var(--accent-tint); color:var(--accent-dark);}
+
+  /* ---------- grid / lists ---------- */
+  .grid-cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px;}
+  .prof-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:24px; text-align:left; transition:border-color .15s ease, transform .15s ease;
+  }
+  .prof-card:hover{transform:translateY(-2px); border-color:var(--accent);}
+  .prof-avatar{
+    width:48px; height:48px; border-radius:50%; background:var(--brand-tint); color:var(--brand);
+    display:flex; align-items:center; justify-content:center; font-weight:600; font-size:17px;
+    margin-bottom:14px;
+  }
+  .prof-card h3{font-size:16.5px; font-weight:600; margin:0 0 4px;}
+  .prof-tag{
+    display:inline-block; font-size:12px; font-weight:600; color:var(--brand);
+    background:var(--brand-tint); padding:4px 10px; border-radius:999px; margin-bottom:10px;
+  }
+  .prof-card p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin:0 0 16px;}
+  .prof-price{font-size:14px; font-weight:600; color:var(--ink); margin-bottom:14px;}
+
+  .filter-bar{display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; justify-content:center;}
+  .filter-bar select{
+    border:1px solid var(--border); border-radius:11px; padding:11px 16px; font-size:14px;
+    font-family:'Inter',sans-serif; background:var(--surface); color:var(--ink);
+  }
+
+  .empty-state{
+    text-align:center; padding:48px 24px; color:var(--ink-faint); font-size:14.5px;
+  }
+
+  /* ---------- table ---------- */
+  table.consultas{width:100%; border-collapse:collapse; background:var(--surface); border-radius:var(--radius); overflow:hidden; border:1px solid var(--border);}
+  table.consultas th{
+    text-align:left; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;
+    color:var(--ink-faint); background:var(--bg-soft); padding:14px 18px; border-bottom:1px solid var(--border);
+  }
+  table.consultas td{padding:16px 18px; font-size:14px; border-bottom:1px solid var(--border);}
+  table.consultas tr:last-child td{border-bottom:none;}
+  .status-pill{
+    display:inline-block; font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px;
+  }
+  .status-confirmada{background:var(--brand-tint); color:var(--brand);}
+  .status-cancelada{background:#F3E4E4; color:#B4573D;}
+  .status-concluida{background:var(--bg-soft); color:var(--ink-soft);}
+  .btn-link-danger{
+    border:none; background:none; color:var(--accent-dark); font-size:13px; font-weight:600;
+    cursor:pointer; padding:0; text-decoration:underline;
+  }
+
+  :focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+
+  @media (max-width: 560px){
+    .wrap{padding:0 20px;}
+    nav.main-nav{display:none;}
+    .logo-text .tag{display:none;}
+    h1.headline{margin-bottom:32px;}
+    .mode-btn{padding:10px 16px; font-size:13.5px;}
+    .hero-actions .btn-solid{min-width:200px;}
+    .card{padding:24px;}
+    .filter-bar{flex-direction:column; align-items:stretch;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+    .pulse path{stroke-dashoffset:0;}
+  }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}mode-cliente{% endblock %}">
+
+<header>
+  <div class="wrap header-inner">
+    <a href="{% url 'home' %}" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4V20M4 12H20" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="mark display">Inovação Saúde</span>
+        <span class="tag">cuidado e confiança, conectados</span>
+      </div>
+    </a>
+    <nav class="main-nav">
+      {% if user.is_authenticated and not user.perfilprofissional %}
+        <a href="{% url 'buscar_profissionais' %}">Buscar profissionais</a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'minhas_consultas' %}">Minhas consultas</a>
+      {% endif %}
+    </nav>
+    <div class="header-actions">
+      {% if user.is_authenticated %}
+        <span class="btn-ghost">Olá, {{ user.first_name|default:user.username }}</span>
+        <a href="{% url 'logout' %}" class="btn-outline">Sair</a>
+      {% else %}
+        {% block header_guest_actions %}
+          <a href="{% url 'login' %}" class="btn-ghost">Entrar</a>
+          <a href="{% url 'cadastro_paciente' %}" class="btn-outline">Cadastre-se</a>
+        {% endblock %}
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    {% if messages %}
+      <ul class="messages" style="margin-top:24px;">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block conteudo %}{% endblock %}
+  </div>
+</main>
+
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

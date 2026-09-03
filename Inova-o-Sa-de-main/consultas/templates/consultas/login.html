@@ -1,0 +1,42 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Entrar{% endblock %}
+
+{% block conteudo %}
+<div class="page page-narrow">
+  <h1 class="page-title display">Bem-vindo de volta</h1>
+  <p class="page-sub">Entre com sua conta para agendar ou gerenciar suas consultas.</p>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Usuário</label>
+        {{ form.username }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Senha</label>
+        {{ form.password }}
+        <div class="field-help" style="text-align:right;">
+          <a href="{% url 'password_reset' %}" style="color:var(--ink-soft);">Esqueceu a senha?</a>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-solid btn-block">Entrar</button>
+    </form>
+  </div>
+
+  <p class="page-sub" style="margin-top:20px; text-align:center;">
+    Ainda não tem conta?
+    <a href="{% url 'cadastro_paciente' %}" style="color:var(--brand); font-weight:600;">Cadastre-se como paciente</a>
+    ou
+    <a href="{% url 'cadastro_profissional' %}" style="color:var(--accent-dark); font-weight:600;">como profissional</a>
+  </p>
+</div>
+{% endblock %}

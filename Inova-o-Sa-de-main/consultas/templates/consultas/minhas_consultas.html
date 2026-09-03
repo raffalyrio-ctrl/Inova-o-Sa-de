@@ -1,0 +1,58 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Minhas consultas{% endblock %}
+
+{% block conteudo %}
+<div class="page">
+  <h1 class="page-title display">Minhas consultas</h1>
+  <p class="page-sub">
+    {% if is_profissional %}
+      Consultas agendadas com seus pacientes.
+    {% else %}
+      Suas consultas agendadas com profissionais.
+    {% endif %}
+  </p>
+
+  {% if consultas %}
+    <table class="consultas">
+      <thead>
+        <tr>
+          <th>{% if is_profissional %}Paciente{% else %}Profissional{% endif %}</th>
+          <th>Data e horário</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for consulta in consultas %}
+          <tr>
+            <td>
+              {% if is_profissional %}
+                {{ consulta.paciente.get_full_name|default:consulta.paciente.username }}
+              {% else %}
+                {{ consulta.profissional.get_full_name|default:consulta.profissional.username }}
+              {% endif %}
+            </td>
+            <td>{{ consulta.data_hora }}</td>
+            <td><span class="status-pill status-{{ consulta.status }}">{{ consulta.get_status_display }}</span></td>
+            <td>
+              {% if consulta.status == "confirmada" %}
+                <form method="post" action="{% url 'cancelar_consulta' consulta.id %}" style="margin:0;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-link-danger">Cancelar</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state">
+      Você ainda não tem consultas agendadas.
+      <br><br>
+      <a href="{% url 'buscar_profissionais' %}" class="btn-solid">Buscar profissionais</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
