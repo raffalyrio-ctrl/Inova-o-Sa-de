@@ -1,0 +1,5 @@
+# Troque @raffalyrio-ctrl pelo seu username do GitHub, se for diferente.
+# Este arquivo faz com que toda Pull Request precise da sua aprovação
+# para poder ser mergeada na main (usado junto com o ruleset-main.json).
+
+* @raffalyrio-ctrl
