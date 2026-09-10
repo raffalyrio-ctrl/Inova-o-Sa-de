@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.utils import timezone
 from .models import PerfilPaciente, PerfilProfissional, Consulta
 
 class CadastroPacienteForm(UserCreationForm):
@@ -34,3 +35,24 @@ class AgendamentoForm(forms.ModelForm):
         widgets = {
             "data_hora": forms.DateTimeInput(attrs={"type": "datetime-local"})
         }
+
+    def clean_data_hora(self):
+        data_hora = self.cleaned_data["data_hora"]
+        if data_hora < timezone.now():
+            raise forms.ValidationError("Não é possível agendar uma consulta em uma data/horário que já passou.")
+        return data_hora
+
+
+class EditarPerfilProfissionalForm(forms.ModelForm):
+    class Meta:
+        model = PerfilProfissional
+        fields = ["especialidade", "bio", "registro_profissional", "valor_consulta"]
+        widgets = {
+            "bio": forms.Textarea(attrs={"rows": 4}),
+        }
+
+
+class EditarPerfilPacienteForm(forms.ModelForm):
+    class Meta:
+        model = PerfilPaciente
+        fields = ["telefone"]

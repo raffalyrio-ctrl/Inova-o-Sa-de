@@ -1,0 +1,34 @@
+{% extends "consultas/base.html" %}
+
+{% block titulo %}Editar perfil{% endblock %}
+
+{% block conteudo %}
+<div class="page page-narrow">
+  <h1 class="page-title display">Editar meu perfil</h1>
+  <p class="page-sub">Atualize suas informações sempre que precisar.</p>
+
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      {% for campo in form %}
+        <div class="field">
+          <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+          {{ campo }}
+          {% if campo.errors %}<div class="field-help">{{ campo.errors|striptags }}</div>{% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn-solid btn-block">Salvar alterações</button>
+    </form>
+  </div>
+
+  <p class="page-sub" style="margin-top:20px; text-align:center;">
+    <a href="{% url 'minhas_consultas' %}" style="color:var(--ink-soft);">← Voltar para minhas consultas</a>
+  </p>
+</div>
+{% endblock %}
