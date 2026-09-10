@@ -10,22 +10,44 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Lê o arquivo .env (se existir) e carrega as variáveis nele para o ambiente.
+# Em produção, o painel de hospedagem também pode definir essas variáveis
+# diretamente, sem precisar de um arquivo .env.
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c+wlx@bf_fgwq)27b9ujk8mnk(57&yf2q6f01fv5s59_e9-9f+'
+# Em produção, defina a variável de ambiente DJANGO_SECRET_KEY com uma chave própria.
+# Gere uma nova com: python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-c+wlx@bf_fgwq)27b9ujk8mnk(57&yf2q6f01fv5s59_e9-9f+",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Localmente, roda como True por padrão. No deploy, defina DJANGO_DEBUG=False.
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+# No deploy, defina DJANGO_ALLOWED_HOSTS com o(s) domínio(s), separados por vírgula.
+# Ex: DJANGO_ALLOWED_HOSTS=seuprojetoo.pythonanywhere.com
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
+    if host.strip()
+]
+if DEBUG:
+    # Facilita rodar localmente sem precisar configurar nada.
+    ALLOWED_HOSTS += ["localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -106,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -122,7 +144,21 @@ STATIC_URL = 'static/'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Por padrão, usa o backend de console (imprime o e-mail no terminal — ótimo para
+# testar localmente sem precisar de servidor de e-mail real).
+# No deploy, defina a variável de ambiente EMAIL_HOST (ex: smtp.gmail.com ou
+# smtp.sendgrid.net) para trocar automaticamente para envio real via SMTP.
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+
+if EMAIL_HOST:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+    EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'

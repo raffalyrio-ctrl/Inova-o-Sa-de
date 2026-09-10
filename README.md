@@ -43,8 +43,34 @@ O projeto já estava estruturado em Django, mas não rodava por causa de alguns 
 
 Testei o fluxo completo (cadastro de paciente, cadastro de profissional, login, busca, agendamento, cancelamento) de ponta a ponta e está funcionando.
 
-## Observações para produção
+## Configuração para produção (Deploy)
 
-- `DEBUG = True` e `SECRET_KEY` fixa no código — trocar antes de publicar de verdade.
-- `ALLOWED_HOSTS` está vazio — precisa ser preenchido no deploy.
-- `EMAIL_BACKEND` está configurado para console (só imprime no terminal); trocar por um provedor real (SMTP, SendGrid, etc.) quando for para produção.
+`SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` e a configuração de e-mail agora são lidos de
+variáveis de ambiente, com valores padrão que funcionam sem configuração nenhuma para
+rodar localmente. Para publicar (ex: PythonAnywhere):
+
+1. Copie `.env.example` para `.env` e preencha os valores (veja os comentários dentro
+   do arquivo). O `.env` nunca é enviado ao GitHub (já está no `.gitignore`).
+2. No mínimo, defina:
+   ```
+   DJANGO_SECRET_KEY=uma-chave-nova-so-sua
+   DJANGO_DEBUG=False
+   DJANGO_ALLOWED_HOSTS=seuprojetoo.pythonanywhere.com
+   ```
+3. (Opcional) Preencha `EMAIL_HOST`, `EMAIL_HOST_USER` e `EMAIL_HOST_PASSWORD` se
+   quiserem que a recuperação de senha envie e-mail de verdade. Sem isso, o sistema
+   continua funcionando normalmente, só que o "e-mail" aparece no log do servidor em
+   vez de ser enviado.
+4. No painel do PythonAnywhere, essas mesmas variáveis também podem ser definidas
+   direto na aba "Web" → "Environment variables", como alternativa ao arquivo `.env`.
+
+Gerar uma `SECRET_KEY` nova:
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+## Outras observações
+
+- `TIME_ZONE` foi ajustado para `America/Sao_Paulo` (estava em `UTC`), já que as
+  consultas são agendadas por pacientes e profissionais no Brasil. Isso afeta como
+  os horários são exibidos e como a validação de "não agendar no passado" é calculada.

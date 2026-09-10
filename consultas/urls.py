@@ -32,5 +32,6 @@ urlpatterns = [
     path("profissional/<int:profissional_id>/", views.perfil_profissional, name="perfil_profissional"),
     path("profissional/<int:profissional_id>/agendar/", views.agendar_consulta, name="agendar_consulta"),
     path("minhas-consultas/", views.minhas_consultas, name="minhas_consultas"),
+    path("perfil/editar/", views.editar_perfil, name="editar_perfil"),
     path("consulta/<int:consulta_id>/cancelar/", views.cancelar_consulta, name="cancelar_consulta"),
 ]

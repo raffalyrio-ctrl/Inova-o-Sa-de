@@ -3,7 +3,13 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import PerfilPaciente, PerfilProfissional, Especialidade, Consulta
-from .forms import CadastroPacienteForm, CadastroProfissionalForm, AgendamentoForm
+from .forms import (
+    CadastroPacienteForm,
+    CadastroProfissionalForm,
+    AgendamentoForm,
+    EditarPerfilProfissionalForm,
+    EditarPerfilPacienteForm,
+)
 
 
 def home(request):
@@ -111,6 +117,31 @@ def minhas_consultas(request):
         "consultas": consultas,
         "is_profissional": is_profissional,
     })
+
+
+@login_required
+def editar_perfil(request):
+    """
+    Operação de UPDATE do CRUD: permite que o usuário logado edite
+    o próprio perfil (profissional ou paciente), dependendo do tipo de conta.
+    """
+    if hasattr(request.user, "perfilprofissional"):
+        perfil = request.user.perfilprofissional
+        FormClasse = EditarPerfilProfissionalForm
+    else:
+        perfil, _ = PerfilPaciente.objects.get_or_create(usuario=request.user)
+        FormClasse = EditarPerfilPacienteForm
+
+    if request.method == "POST":
+        form = FormClasse(request.POST, instance=perfil)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect("editar_perfil")
+    else:
+        form = FormClasse(instance=perfil)
+
+    return render(request, "consultas/editar_perfil.html", {"form": form})
 
 
 @login_required
